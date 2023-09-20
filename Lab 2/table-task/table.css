@@ -1,0 +1,18 @@
+#container {
+    margin: 50px;
+    display: flex;
+    flex-direction: column;
+}
+
+#colors {
+    height: 20px;
+    width: 290px;
+    margin-bottom: 10px;
+  }
+  
+td {
+    border: 1px black solid;
+    text-align: center;
+    padding: 15px;
+    font-weight: bold;
+  }
