@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Чат</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    #chat {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    #messages {
+      list-style-type: none;
+      padding: 0;
+    }
+    #messages li {
+      margin: 5px 0;
+      padding: 10px;
+      background-color: #f2f2f2;
+      border-radius: 5px;
+    }
+    #messages li:nth-child(odd) {
+      background-color: #e1e1e1;
+    }
+    #user-name-form {
+      text-align: center;
+    }
+    #change-username-form {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    label {
+      font-weight: bold;
+    }
+  </style>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <h1>Чат</h1>
+  <div id="user-name-form">
+    <label for="username">Ваше ім'я:</label>
+    <input type="text" id="username" />
+    <button id="set-username">Змінити ім'я</button>
+  </div>
+  <div id="chat" style="display: none;">
+    <div id="change-username-form">
+      <label for="new-username">Нове ім'я:</label>
+      <input type="text" id="new-username" />
+      <button id="change-username">Змінити ім'я</button>
+    </div>
+    <ul id="messages"></ul>
+    <form id="form" action="">
+      <input id="m" autocomplete="off" /><button>Надіслати</button>
+    </form>
+  </div>
+  <script>
+    const socket = io();
+    let username = '';
+
+    $('#set-username').click(function() {
+      username = $('#username').val();
+      if (username.trim() !== '') {
+        $('#user-name-form').hide();
+        $('#chat').show();
+      }
+    });
+
+    $('#change-username').click(function() {
+      const newUsername = $('#new-username').val();
+      if (newUsername.trim() !== '') {
+        username = newUsername;
+        $('#new-username').val('');
+      }
+    });
+
+    $('#form').submit(function(){
+      const message = $('#m').val();
+      if (message.trim() !== '') {
+        socket.emit('chat message', `${username}: ${message}`);
+        $('#m').val('');
+      }
+      return false;
+    });
+
+    socket.on('chat message', function(msg){
+      $('#messages').append($('<li>').text(msg));
+    });
+  </script>
+</body>
+</html>
